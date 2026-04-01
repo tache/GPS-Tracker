@@ -1,0 +1,130 @@
+# -----------------------------
+
+# OS X
+.DS_Store
+
+# -----------------------------
+
+## Xcode generated
+build/
+DerivedData
+
+# -----------------------------
+
+## Various settings
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+profile
+scratch.txt
+
+# -----------------------------
+
+## Other
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+#*.xcworkspacedata
+#*.xcuserdatad
+xcdebugger/
+-*/
+•*/
+*.xcscmblueprint
+
+# -----------------------------
+
+## Obj-C/Swift specific
+*.hmap
+*.ipa
+
+# -----------------------------
+
+## Ruby
+.ruby-gemset.*
+.ruby-version.*
+.rvmrc*
+#Gemfile.lock
+
+# -----------------------------
+
+# CocoaPods
+# We recommend against adding the Pods directory to your .gitignore. However
+# you should judge for yourself, the pros and cons are mentioned at:
+# http://guides.cocoapods.org/using/using-cocoapods.html#should-i-ignore-the-pods-directory-in-source-control
+#
+Pods/
+
+# -----------------------------
+
+# fastlane
+
+# fastlane/screenshots/*
+# fastlane/screenshots-app-store/*
+**/devices_frames
+fastlane/report.xml
+fastlane-setup.bash
+fastlane/screenshots/test_output
+fastlane/screenshots/*/*.png
+fastlane/screenshots.*
+fastlane/metadata.*
+fastlane.*
+
+# -----------------------------
+
+# Other Misc
+
+scratch.txt
+*.mobileprovision
+*.cer
+Working
+Artwork/Generated
+Dangerfile
+FirebaseCrashReportingKey
+App Store iPhone-Mockups.afdesign
+
+*_framed.png
+iPhone*-AS-*.png
+iPad*-AS-*.png
+
+# Fonts
+fonts.*
+# Noto*.otf
+# Arial*.ttf
+# BebasNeue*.otf
+
+snaps.2019*
+wow-metadata.*
+wow-metadata-pro.*
+*.p8
+dsym.downloads
+
+.env*
+
+# Google Certs
+mondo-translater-*.json
+Artwork/Project Files/Generated
+
+**/*.aar
+**/*.mp4
+./.claude/
+./.vscode/
+**/*local.json
+
+**/temp_deploy
+BackgroundAssets
+.vscode
+**/certs-*
+claude-working-documents
+Artwork/Project Files/iMovie
+
+# Git worktrees
+.worktrees/
+.superpowers
+AGENTS.md
+claude.local.md
