@@ -7,12 +7,13 @@
 // Claude Generated: version 1 - Protocol enabling mock injection for testing
 // Claude Generated: version 2 - Removed SkyMessage placeholder (real type added in SkyMessage.swift)
 // Claude Generated: version 3 - Removed MQTTConfiguration placeholder (real type added in MQTTConfiguration.swift)
+// Claude Generated: version 4 - Added nonisolated to stream properties to match concrete actor implementation
 
 /// Protocol that MQTTService conforms to, enabling MockMQTTService injection in tests.
 /// ConnectionState is top-level so this protocol compiles independently.
 internal protocol MQTTServiceProtocol: AnyObject {
     func connect(config: MQTTConfiguration, username: String, password: String) async throws
     func disconnect() async
-    var skyStream: AsyncStream<SkyMessage> { get }
-    var connectionStateStream: AsyncStream<ConnectionState> { get }
+    nonisolated var skyStream: AsyncStream<SkyMessage> { get }
+    nonisolated var connectionStateStream: AsyncStream<ConnectionState> { get }
 }
