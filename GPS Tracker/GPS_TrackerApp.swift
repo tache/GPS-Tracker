@@ -4,16 +4,50 @@
 //
 //  Created by Christopher Graham on 4/1/26.
 //
-// Claude Generated: version 1 - Stub placeholder; replaced in full by Task 11
+// Claude Generated: version 1 - App entry point with ModelContainer and service injection
+// Claude Generated: version 2 - Wire ConfigurationView into Settings scene
+// Claude Generated: version 3 - Use in-memory store when --uitesting flag is present
 
 import SwiftUI
+import SwiftData
 
-/// Temporary stub — full implementation delivered in Task 11 (App entry point).
 @main
 struct GPSTrackerApp: App {
+
+    private let mqttService = MQTTService()
+    private let satelliteStore: SatelliteStore
+
+    private let modelContainer: ModelContainer = {
+        let schema = Schema([
+            SatelliteHistoryEntry.self,
+            MQTTConfiguration.self
+        ])
+        let isUITesting = CommandLine.arguments.contains("--uitesting")
+        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: isUITesting)
+        do {
+            return try ModelContainer(for: schema, configurations: [config])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }()
+
+    init() {
+        let store = SatelliteStore(mqttService: mqttService)
+        store.configure(modelContext: modelContainer.mainContext)
+        satelliteStore = store
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(satelliteStore)
+        }
+        .modelContainer(modelContainer)
+
+        Settings {
+            ConfigurationView()
+                .environment(satelliteStore)
+                .modelContainer(modelContainer)
         }
     }
 }

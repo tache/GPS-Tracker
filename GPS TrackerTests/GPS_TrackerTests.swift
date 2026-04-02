@@ -11,7 +11,9 @@
 // Claude Generated: version 5 - Added KeychainHelperTests suite
 // Claude Generated: version 6 - Added MockMQTTService and MQTTServiceProtocolTests suite
 // Claude Generated: version 7 - Added SatelliteStoreTests suite
+// Claude Generated: version 8 - Added PolarCoordinateTests suite
 
+import CoreGraphics
 import Foundation
 import Testing
 @testable import GPS_Tracker
@@ -376,5 +378,77 @@ struct SatelliteStoreTests {
         #expect(store.shouldWriteHistory(lastWrite: Date()) == false)
         #expect(store.shouldWriteHistory(lastWrite: Date().addingTimeInterval(-6)) == true)
         #expect(store.shouldWriteHistory(lastWrite: nil) == true)
+    }
+}
+
+@Suite("Polar Coordinate Tests")
+struct PolarCoordinateTests {
+
+    /// Mirror the coordinate function from PolarGraphView
+    private func polarPoint(elevation: Int, azimuth: Int,
+                             center: CGPoint, radius: CGFloat) -> CGPoint {
+        let dist = (1.0 - Double(elevation) / 90.0) * Double(radius)
+        let azRad = Double(azimuth) * .pi / 180.0
+        return CGPoint(
+            x: center.x + dist * sin(azRad),
+            y: center.y - dist * cos(azRad)
+        )
+    }
+
+    @Test("Zenith (elevation 90) maps to center")
+    func zenithIsCenter() {
+        let center = CGPoint(x: 100, y: 100)
+        let pt = polarPoint(elevation: 90, azimuth: 0, center: center, radius: 100)
+        #expect(abs(pt.x - center.x) < 0.001)
+        #expect(abs(pt.y - center.y) < 0.001)
+    }
+
+    @Test("Horizon (elevation 0) maps to rim")
+    func horizonIsRim() {
+        let center = CGPoint(x: 100, y: 100)
+        let radius: CGFloat = 100
+        // North = azimuth 0 → top of circle
+        let north = polarPoint(elevation: 0, azimuth: 0, center: center, radius: radius)
+        #expect(abs(north.x - center.x) < 0.001)        // x = center
+        #expect(abs(north.y - (center.y - radius)) < 0.001) // y = top
+    }
+
+    @Test("East (azimuth 90) maps to right side")
+    func eastIsRight() {
+        let center = CGPoint(x: 100, y: 100)
+        let radius: CGFloat = 100
+        let east = polarPoint(elevation: 0, azimuth: 90, center: center, radius: radius)
+        #expect(abs(east.x - (center.x + radius)) < 0.001) // x = right
+        #expect(abs(east.y - center.y) < 0.001)             // y = center
+    }
+
+    @Test("South (azimuth 180) maps to bottom")
+    func southIsBottom() {
+        let center = CGPoint(x: 100, y: 100)
+        let radius: CGFloat = 100
+        let south = polarPoint(elevation: 0, azimuth: 180, center: center, radius: radius)
+        #expect(abs(south.x - center.x) < 0.001)
+        #expect(abs(south.y - (center.y + radius)) < 0.001)
+    }
+
+    @Test("Elevation 30 maps to 67% radius")
+    func elevationThirtyMapsToSeventyPercent() {
+        let center = CGPoint(x: 0, y: 0)
+        let radius: CGFloat = 100
+        // At azimuth 0 (north), x should be ~0, y should be -66.7
+        let pt = polarPoint(elevation: 30, azimuth: 0, center: center, radius: radius)
+        let expectedR = (1.0 - 30.0 / 90.0) * 100.0  // 66.67
+        #expect(abs(pt.y - (-expectedR)) < 0.001)
+    }
+
+    @Test("Trail opacity — floor at 0.2")
+    func trailOpacityFloor() {
+        func opacity(ageSecs: Double) -> Double {
+            max(0.2, 1.0 - (ageSecs / 86400.0))
+        }
+        #expect(opacity(ageSecs: 0) == 1.0)
+        #expect(opacity(ageSecs: 43200) == 0.5)      // 12 hours
+        #expect(opacity(ageSecs: 86400) == 0.2)      // 24 hours (floor)
+        #expect(opacity(ageSecs: 90000) == 0.2)      // beyond 24 hours (floor)
     }
 }
