@@ -1,0 +1,629 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F56D544A2F7DDE84000C9D62 /* MQTTNIO in Frameworks */ = {isa = PBXBuildFile; productRef = F56D54492F7DDE84000C9D62 /* MQTTNIO */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F56D541E2F7DC05D000C9D62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F56D54062F7DC05D000C9D62 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F56D540D2F7DC05D000C9D62;
+			remoteInfo = "GPS Tracker";
+		};
+		F56D54282F7DC05D000C9D62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F56D54062F7DC05D000C9D62 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F56D540D2F7DC05D000C9D62;
+			remoteInfo = "GPS Tracker";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F56D540E2F7DC05D000C9D62 /* GPS Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GPS Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F56D541D2F7DC05D000C9D62 /* GPS TrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GPS TrackerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F56D54272F7DC05D000C9D62 /* GPS TrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GPS TrackerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		F56D54102F7DC05D000C9D62 /* GPS Tracker */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "GPS Tracker";
+			sourceTree = "<group>";
+		};
+		F56D54202F7DC05D000C9D62 /* GPS TrackerTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "GPS TrackerTests";
+			sourceTree = "<group>";
+		};
+		F56D542A2F7DC05D000C9D62 /* GPS TrackerUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "GPS TrackerUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F56D540B2F7DC05D000C9D62 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F56D544A2F7DDE84000C9D62 /* MQTTNIO in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F56D541A2F7DC05D000C9D62 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F56D54242F7DC05D000C9D62 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F56D54052F7DC05D000C9D62 = {
+			isa = PBXGroup;
+			children = (
+				F56D54102F7DC05D000C9D62 /* GPS Tracker */,
+				F56D54202F7DC05D000C9D62 /* GPS TrackerTests */,
+				F56D542A2F7DC05D000C9D62 /* GPS TrackerUITests */,
+				F56D540F2F7DC05D000C9D62 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F56D540F2F7DC05D000C9D62 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F56D540E2F7DC05D000C9D62 /* GPS Tracker.app */,
+				F56D541D2F7DC05D000C9D62 /* GPS TrackerTests.xctest */,
+				F56D54272F7DC05D000C9D62 /* GPS TrackerUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F56D540D2F7DC05D000C9D62 /* GPS Tracker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F56D54312F7DC05D000C9D62 /* Build configuration list for PBXNativeTarget "GPS Tracker" */;
+			buildPhases = (
+				F56D540A2F7DC05D000C9D62 /* Sources */,
+				F56D540B2F7DC05D000C9D62 /* Frameworks */,
+				F56D540C2F7DC05D000C9D62 /* Resources */,
+				F56D587B2F7DF105000C9D62 /* Free - SwiftLint - You should really be following these guidelines */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F56D54102F7DC05D000C9D62 /* GPS Tracker */,
+			);
+			name = "GPS Tracker";
+			packageProductDependencies = (
+				F56D54492F7DDE84000C9D62 /* MQTTNIO */,
+			);
+			productName = "GPS Tracker";
+			productReference = F56D540E2F7DC05D000C9D62 /* GPS Tracker.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F56D541C2F7DC05D000C9D62 /* GPS TrackerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F56D54342F7DC05D000C9D62 /* Build configuration list for PBXNativeTarget "GPS TrackerTests" */;
+			buildPhases = (
+				F56D54192F7DC05D000C9D62 /* Sources */,
+				F56D541A2F7DC05D000C9D62 /* Frameworks */,
+				F56D541B2F7DC05D000C9D62 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F56D541F2F7DC05D000C9D62 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				F56D54202F7DC05D000C9D62 /* GPS TrackerTests */,
+			);
+			name = "GPS TrackerTests";
+			packageProductDependencies = (
+			);
+			productName = "GPS TrackerTests";
+			productReference = F56D541D2F7DC05D000C9D62 /* GPS TrackerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		F56D54262F7DC05D000C9D62 /* GPS TrackerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F56D54372F7DC05D000C9D62 /* Build configuration list for PBXNativeTarget "GPS TrackerUITests" */;
+			buildPhases = (
+				F56D54232F7DC05D000C9D62 /* Sources */,
+				F56D54242F7DC05D000C9D62 /* Frameworks */,
+				F56D54252F7DC05D000C9D62 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F56D54292F7DC05D000C9D62 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				F56D542A2F7DC05D000C9D62 /* GPS TrackerUITests */,
+			);
+			name = "GPS TrackerUITests";
+			packageProductDependencies = (
+			);
+			productName = "GPS TrackerUITests";
+			productReference = F56D54272F7DC05D000C9D62 /* GPS TrackerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F56D54062F7DC05D000C9D62 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2640;
+				LastUpgradeCheck = 2640;
+				TargetAttributes = {
+					F56D540D2F7DC05D000C9D62 = {
+						CreatedOnToolsVersion = 26.4;
+					};
+					F56D541C2F7DC05D000C9D62 = {
+						CreatedOnToolsVersion = 26.4;
+						TestTargetID = F56D540D2F7DC05D000C9D62;
+					};
+					F56D54262F7DC05D000C9D62 = {
+						CreatedOnToolsVersion = 26.4;
+						TestTargetID = F56D540D2F7DC05D000C9D62;
+					};
+				};
+			};
+			buildConfigurationList = F56D54092F7DC05D000C9D62 /* Build configuration list for PBXProject "GPS Tracker" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F56D54052F7DC05D000C9D62;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F56D54482F7DDE84000C9D62 /* XCRemoteSwiftPackageReference "mqtt-nio" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = F56D540F2F7DC05D000C9D62 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F56D540D2F7DC05D000C9D62 /* GPS Tracker */,
+				F56D541C2F7DC05D000C9D62 /* GPS TrackerTests */,
+				F56D54262F7DC05D000C9D62 /* GPS TrackerUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F56D540C2F7DC05D000C9D62 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F56D541B2F7DC05D000C9D62 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F56D54252F7DC05D000C9D62 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F56D587B2F7DF105000C9D62 /* Free - SwiftLint - You should really be following these guidelines */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Free - SwiftLint - You should really be following these guidelines";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "export PATH=\"$PATH:/usr/local/bin:/opt/homebrew/bin\"\necho \"Swiftlint version\"\nswiftlint --version\nif [[ $(swiftlint version 2>&1) =~ 0\\.63\\.2 ]]\nthen\necho \"running SwiftLint\"\nswiftlint\nelse\necho \"SwiftLint is not the correct version\"\nfi\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F56D540A2F7DC05D000C9D62 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F56D54192F7DC05D000C9D62 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F56D54232F7DC05D000C9D62 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F56D541F2F7DC05D000C9D62 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F56D540D2F7DC05D000C9D62 /* GPS Tracker */;
+			targetProxy = F56D541E2F7DC05D000C9D62 /* PBXContainerItemProxy */;
+		};
+		F56D54292F7DC05D000C9D62 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F56D540D2F7DC05D000C9D62 /* GPS Tracker */;
+			targetProxy = F56D54282F7DC05D000C9D62 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		F56D542F2F7DC05D000C9D62 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = D9X6K92XMK;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F56D54302F7DC05D000C9D62 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = D9X6K92XMK;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		F56D54322F7DC05D000C9D62 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D9X6K92XMK;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mondocoolstudios.GPS-Tracker";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		F56D54332F7DC05D000C9D62 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D9X6K92XMK;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mondocoolstudios.GPS-Tracker";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		F56D54352F7DC05D000C9D62 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D9X6K92XMK;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mondocoolstudios.GPS-TrackerTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GPS Tracker.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GPS Tracker";
+			};
+			name = Debug;
+		};
+		F56D54362F7DC05D000C9D62 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D9X6K92XMK;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mondocoolstudios.GPS-TrackerTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GPS Tracker.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GPS Tracker";
+			};
+			name = Release;
+		};
+		F56D54382F7DC05D000C9D62 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D9X6K92XMK;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mondocoolstudios.GPS-TrackerUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "GPS Tracker";
+			};
+			name = Debug;
+		};
+		F56D54392F7DC05D000C9D62 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D9X6K92XMK;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mondocoolstudios.GPS-TrackerUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "GPS Tracker";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F56D54092F7DC05D000C9D62 /* Build configuration list for PBXProject "GPS Tracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F56D542F2F7DC05D000C9D62 /* Debug */,
+				F56D54302F7DC05D000C9D62 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F56D54312F7DC05D000C9D62 /* Build configuration list for PBXNativeTarget "GPS Tracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F56D54322F7DC05D000C9D62 /* Debug */,
+				F56D54332F7DC05D000C9D62 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F56D54342F7DC05D000C9D62 /* Build configuration list for PBXNativeTarget "GPS TrackerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F56D54352F7DC05D000C9D62 /* Debug */,
+				F56D54362F7DC05D000C9D62 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F56D54372F7DC05D000C9D62 /* Build configuration list for PBXNativeTarget "GPS TrackerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F56D54382F7DC05D000C9D62 /* Debug */,
+				F56D54392F7DC05D000C9D62 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F56D54482F7DDE84000C9D62 /* XCRemoteSwiftPackageReference "mqtt-nio" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swift-server-community/mqtt-nio.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.13.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F56D54492F7DDE84000C9D62 /* MQTTNIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F56D54482F7DDE84000C9D62 /* XCRemoteSwiftPackageReference "mqtt-nio" */;
+			productName = MQTTNIO;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = F56D54062F7DC05D000C9D62 /* Project object */;
+}
