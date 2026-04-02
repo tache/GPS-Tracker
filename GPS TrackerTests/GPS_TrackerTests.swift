@@ -9,6 +9,8 @@
 // Claude Generated: version 3 - Added SkyMessageDecodingTests suite
 // Claude Generated: version 4 - Added SwiftDataModelTests suite
 // Claude Generated: version 5 - Added KeychainHelperTests suite
+// Claude Generated: version 6 - Added MockMQTTService and MQTTServiceProtocolTests suite
+// Claude Generated: version 7 - Added SatelliteStoreTests suite
 
 import Foundation
 import Testing
@@ -231,5 +233,148 @@ struct KeychainHelperTests {
         let loaded = KeychainHelper.load()
         #expect(loaded?.username == "second")
         #expect(loaded?.password == "pass2")
+    }
+}
+
+// MockMQTTService for integration tests — yields pre-defined values
+final class MockMQTTService: MQTTServiceProtocol, @unchecked Sendable {
+    var skyMessages: [SkyMessage] = []
+    var stateSequence: [ConnectionState] = []
+    private(set) var connectCalled = false
+    private(set) var disconnectCalled = false
+    private(set) var lastConfig: MQTTConfiguration?
+
+    func connect(config: MQTTConfiguration, username: String, password: String) async throws {
+        connectCalled = true
+        lastConfig = config
+    }
+
+    func disconnect() async {
+        disconnectCalled = true
+    }
+
+    var skyStream: AsyncStream<SkyMessage> {
+        let messages = skyMessages
+        return AsyncStream { continuation in
+            for msg in messages { continuation.yield(msg) }
+            continuation.finish()
+        }
+    }
+
+    var connectionStateStream: AsyncStream<ConnectionState> {
+        let states = stateSequence
+        return AsyncStream { continuation in
+            for state in states { continuation.yield(state) }
+            continuation.finish()
+        }
+    }
+}
+
+@Suite("MQTTService Protocol Tests")
+struct MQTTServiceProtocolTests {
+
+    @Test("MockMQTTService connect records call")
+    func mockConnectRecords() async throws {
+        let mock = MockMQTTService()
+        let config = MQTTConfiguration(hostname: "test.broker", port: 8883)
+        try await mock.connect(config: config, username: "u", password: "p")
+        #expect(mock.connectCalled == true)
+        #expect(mock.lastConfig?.hostname == "test.broker")
+    }
+
+    @Test("MockMQTTService skyStream yields all messages")
+    func mockSkyStreamYieldsMessages() async {
+        let mock = MockMQTTService()
+        let msg = SkyMessage(satUsed: 5, satVisible: 10,
+                             hdop: nil, vdop: nil, pdop: nil, tdop: nil,
+                             gdop: nil, xdop: nil, ydop: nil, satellites: [])
+        mock.skyMessages = [msg, msg]
+        var count = 0
+        for await _ in mock.skyStream { count += 1 }
+        #expect(count == 2)
+    }
+
+    @Test("MockMQTTService connectionStateStream yields states")
+    func mockStateStreamYieldsStates() async {
+        let mock = MockMQTTService()
+        mock.stateSequence = [.connecting, .connected]
+        var states: [ConnectionState] = []
+        for await state in mock.connectionStateStream { states.append(state) }
+        #expect(states == [.connecting, .connected])
+    }
+}
+
+@Suite("SatelliteStore Tests")
+struct SatelliteStoreTests {
+
+    private func makeSkyMessage(satellites: [SkyMessageSatellite]) -> SkyMessage {
+        SkyMessage(satUsed: satellites.filter(\.used).count,
+                   satVisible: satellites.count,
+                   hdop: nil, vdop: nil, pdop: nil, tdop: nil,
+                   gdop: nil, xdop: nil, ydop: nil,
+                   satellites: satellites)
+    }
+
+    private func makeSatEntry(prn: Int, snr: Int, used: Bool) -> SkyMessageSatellite {
+        SkyMessageSatellite(prn: prn, el: 45, az: 90, ss: snr, used: used, seen: 100,
+                             gnssid: nil, svid: nil)
+    }
+
+    @Test("Converts SkyMessageSatellite to Satellite correctly")
+    func conversionMapsFields() async {
+        let mock = MockMQTTService()
+        let entry = makeSatEntry(prn: 21, snr: 43, used: true)
+        mock.skyMessages = [makeSkyMessage(satellites: [entry])]
+        mock.stateSequence = [.connected]
+
+        let store = SatelliteStore(mqttService: mock)
+        // Allow stream to process
+        try? await Task.sleep(for: .milliseconds(100))
+
+        let sat = store.satellites.first { $0.prn == 21 }
+        #expect(sat?.snr == 43)   // ss → snr mapping
+        #expect(sat?.used == true)
+        #expect(sat?.elevation == 45)
+        #expect(sat?.azimuth == 90)
+    }
+
+    @Test("Satellites sorted by SNR descending")
+    func satellitesSortedBySnr() async {
+        let mock = MockMQTTService()
+        let entries = [
+            makeSatEntry(prn: 1, snr: 15, used: true),
+            makeSatEntry(prn: 2, snr: 43, used: true),
+            makeSatEntry(prn: 3, snr: 28, used: true)
+        ]
+        mock.skyMessages = [makeSkyMessage(satellites: entries)]
+        mock.stateSequence = []
+
+        let store = SatelliteStore(mqttService: mock)
+        try? await Task.sleep(for: .milliseconds(100))
+
+        let snrOrder = store.satellites.map(\.snr)
+        #expect(snrOrder == snrOrder.sorted(by: >))
+    }
+
+    @Test("Connection state mirrors MQTT service stream")
+    func connectionStateMirrored() async {
+        let mock = MockMQTTService()
+        mock.stateSequence = [.connecting, .connected]
+        mock.skyMessages = []
+
+        let store = SatelliteStore(mqttService: mock)
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(store.connectionState == .connected)
+    }
+
+    @Test("Write throttle — skips writes within 5 second window")
+    func writeThrottleSkipsRecentWrites() {
+        // Verify that lastHistoryWriteDate logic is present and correct
+        // This tests the guard condition, not SwiftData itself
+        let store = SatelliteStore(mqttService: MockMQTTService())
+        #expect(store.shouldWriteHistory(lastWrite: Date()) == false)
+        #expect(store.shouldWriteHistory(lastWrite: Date().addingTimeInterval(-6)) == true)
+        #expect(store.shouldWriteHistory(lastWrite: nil) == true)
     }
 }
