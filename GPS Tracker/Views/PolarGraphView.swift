@@ -1,0 +1,153 @@
+//
+//  PolarGraphView.swift
+//  GPS Tracker
+//
+//  Created by Christopher Graham on 4/1/26.
+//
+// Claude Generated: version 1 - Canvas-based satellite polar sky view
+// Claude Generated: version 2 - Fix trail segment opacity to fade per-segment not per-path
+
+import SwiftUI
+import SwiftData
+
+/// Polar sky graph showing satellite positions.
+/// Center = zenith (90° elevation), rim = horizon (0°), north at top.
+/// Satellites are drawn as solid filled circles (used) or stroked outlines (!used),
+/// colored by SatelliteColor. Trails drawn from SwiftData history when enabled.
+struct PolarGraphView: View {
+
+    @Environment(SatelliteStore.self) private var store
+    @Query(sort: \SatelliteHistoryEntry.timestamp) private var history: [SatelliteHistoryEntry]
+
+    var body: some View {
+        GeometryReader { geo in
+            let size = min(geo.size.width, geo.size.height)
+            let radius = size * 0.45
+            let center = CGPoint(x: geo.size.width / 2, y: geo.size.height / 2)
+
+            Canvas { ctx, _ in
+                drawGrid(ctx: ctx, center: center, radius: radius)
+                drawCardinals(ctx: ctx, center: center, radius: radius)
+                if store.showTrails {
+                    drawTrails(ctx: ctx, center: center, radius: radius)
+                }
+                drawSatellites(ctx: ctx, center: center, radius: radius)
+            }
+            .overlay {
+                if store.satellites.isEmpty {
+                    Text("No satellite data")
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .aspectRatio(1, contentMode: .fit)
+        .padding()
+    }
+
+    // MARK: - Coordinate Math
+
+    private func polarPoint(elevation: Int, azimuth: Int,
+                             center: CGPoint, radius: CGFloat) -> CGPoint {
+        let dist = (1.0 - Double(elevation) / 90.0) * Double(radius)
+        let azRad = Double(azimuth) * .pi / 180.0
+        return CGPoint(
+            x: center.x + dist * sin(azRad),
+            y: center.y - dist * cos(azRad)
+        )
+    }
+
+    // MARK: - Drawing
+
+    private func drawGrid(ctx: GraphicsContext, center: CGPoint, radius: CGFloat) {
+        // Outer circle (background)
+        let bgRect = CGRect(x: center.x - radius, y: center.y - radius,
+                            width: radius * 2, height: radius * 2)
+        ctx.fill(Path(ellipseIn: bgRect), with: .color(.secondary.opacity(0.08)))
+
+        // Elevation rings at 0° (rim), 30°, 60°, 90° (center dot)
+        for elevation in [0, 30, 60] {
+            let rimPoint = polarPoint(elevation: elevation, azimuth: 0, center: center, radius: radius)
+            let ringRadius = abs(center.y - rimPoint.y)
+            let rect = CGRect(x: center.x - ringRadius, y: center.y - ringRadius,
+                              width: ringRadius * 2, height: ringRadius * 2)
+            ctx.stroke(Path(ellipseIn: rect), with: .color(.secondary.opacity(0.3)), lineWidth: 0.5)
+        }
+    }
+
+    private func drawCardinals(ctx: GraphicsContext, center: CGPoint, radius: CGFloat) {
+        let labels: [(String, Int)] = [("N", 0), ("E", 90), ("S", 180), ("W", 270)]
+        for (label, azimuth) in labels {
+            var labelPoint = polarPoint(elevation: 0, azimuth: azimuth, center: center, radius: radius)
+            // Offset label slightly outside the rim
+            let labelOffset: CGFloat = 14
+            let azRad = Double(azimuth) * .pi / 180.0
+            labelPoint.x += labelOffset * sin(azRad)
+            labelPoint.y -= labelOffset * cos(azRad)
+            ctx.draw(Text(label).font(.caption2).foregroundStyle(.secondary),
+                     at: labelPoint)
+        }
+    }
+
+    private func drawTrails(ctx: GraphicsContext, center: CGPoint, radius: CGFloat) {
+        // Group history by PRN
+        var byPrn: [Int: [SatelliteHistoryEntry]] = [:]
+        for entry in history { byPrn[entry.prn, default: []].append(entry) }
+
+        let now = Date()
+        for (_, entries) in byPrn {
+            guard entries.count > 1 else { continue }
+            for idx in 1..<entries.count {
+                let prev = entries[idx - 1]
+                let curr = entries[idx]
+                let from = polarPoint(elevation: prev.elevation, azimuth: prev.azimuth,
+                                      center: center, radius: radius)
+                let to = polarPoint(elevation: curr.elevation, azimuth: curr.azimuth,
+                                    center: center, radius: radius)
+                let ageSecs = now.timeIntervalSince(curr.timestamp)
+                let opacity = max(0.2, 1.0 - (ageSecs / 86400.0))
+                var segment = Path()
+                segment.move(to: from)
+                segment.addLine(to: to)
+                ctx.stroke(segment, with: .color(.secondary.opacity(opacity)), lineWidth: 1)
+            }
+        }
+    }
+
+    private func drawSatellites(ctx: GraphicsContext, center: CGPoint, radius: CGFloat) {
+        let dotRadius: CGFloat = 6
+
+        for sat in store.satellites {
+            let point = polarPoint(elevation: sat.elevation, azimuth: sat.azimuth,
+                                   center: center, radius: radius)
+            let rect = CGRect(x: point.x - dotRadius, y: point.y - dotRadius,
+                              width: dotRadius * 2, height: dotRadius * 2)
+            let color = swiftUIColor(for: sat.color)
+
+            if sat.used {
+                ctx.fill(Path(ellipseIn: rect), with: .color(color))
+            } else {
+                ctx.stroke(Path(ellipseIn: rect), with: .color(color), lineWidth: 1.5)
+            }
+
+            // PRN label
+            ctx.draw(Text("\(sat.prn)").font(.system(size: 9)).foregroundStyle(.secondary),
+                     at: CGPoint(x: point.x + dotRadius + 4, y: point.y))
+        }
+    }
+
+    private func swiftUIColor(for color: SatelliteColor) -> Color {
+        switch color {
+        case .red:    return .red
+        case .green:  return .green
+        case .orange: return .orange
+        case .yellow: return .yellow
+        }
+    }
+}
+
+#Preview {
+    PolarGraphView()
+        .environment(SatelliteStore(mqttService: MQTTService()))
+        .modelContainer(for: [SatelliteHistoryEntry.self, MQTTConfiguration.self],
+                        inMemory: true)
+}

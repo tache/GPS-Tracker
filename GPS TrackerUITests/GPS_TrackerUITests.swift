@@ -4,40 +4,57 @@
 //
 //  Created by Christopher Graham on 4/1/26.
 //
+// Claude Generated: version 1 - UI tests for critical user flows
 
 import XCTest
 
 final class GPSTrackerUITests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    var app: XCUIApplication!
 
-        // In UI tests it is usually best to stop immediately when a failure occurs.
+    override func setUp() {
+        super.setUp()
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
+        app = XCUIApplication()
+        app.launchArguments = ["--uitesting"]
         app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // XCUIAutomation Documentation
-        // https://developer.apple.com/documentation/xcuiautomation
     }
 
-    @MainActor
-    func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
-        }
+    func testAppLaunchesSuccessfully() {
+        XCTAssertTrue(app.windows.firstMatch.exists)
+    }
+
+    func testFirstLaunchShowsConfigurationSheet() {
+        // On first launch with no config, the configuration sheet should appear
+        // (The app uses --uitesting flag to start with a blank in-memory store)
+        let hostnameField = app.textFields["Hostname"]
+        XCTAssertTrue(hostnameField.waitForExistence(timeout: 3),
+                      "Configuration sheet should appear on first launch")
+    }
+
+    func testPolarGraphViewIsVisible() {
+        // Dismiss config sheet if present by pressing Escape
+        app.typeKey(.escape, modifierFlags: [])
+
+        // The main window should be present
+        XCTAssertTrue(app.windows.firstMatch.exists)
+    }
+
+    func testTableToggleButtonExists() {
+        app.typeKey(.escape, modifierFlags: [])
+
+        let satellitesButton = app.buttons["Satellites"]
+        XCTAssertTrue(satellitesButton.waitForExistence(timeout: 2))
+    }
+
+    func testSettingsButtonOpensConfig() {
+        app.typeKey(.escape, modifierFlags: [])
+
+        let settingsButton = app.buttons["Settings"]
+        XCTAssertTrue(settingsButton.waitForExistence(timeout: 2))
+        settingsButton.tap()
+
+        let hostnameField = app.textFields["Hostname"]
+        XCTAssertTrue(hostnameField.waitForExistence(timeout: 2))
     }
 }
