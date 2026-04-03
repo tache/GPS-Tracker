@@ -7,12 +7,15 @@
 // Claude Generated: version 1 - App entry point with ModelContainer and service injection
 // Claude Generated: version 2 - Wire ConfigurationView into Settings scene
 // Claude Generated: version 3 - Use in-memory store when --uitesting flag is present
+// Claude Generated: version 4 - Connect on scenePhase active instead of init-time Task
 
 import SwiftUI
 import SwiftData
 
 @main
 struct GPSTrackerApp: App {
+
+    @Environment(\.scenePhase) private var scenePhase
 
     private let mqttService = MQTTService()
     private let satelliteStore: SatelliteStore
@@ -43,6 +46,11 @@ struct GPSTrackerApp: App {
                 .environment(satelliteStore)
         }
         .modelContainer(modelContainer)
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active && satelliteStore.connectionState == .disconnected {
+                Task { await satelliteStore.connectWithCurrentConfig() }
+            }
+        }
 
         Settings {
             ConfigurationView()

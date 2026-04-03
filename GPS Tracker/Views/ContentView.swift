@@ -5,6 +5,7 @@
 //  Created by Christopher Graham on 4/1/26.
 //
 // Claude Generated: version 1 - Root HStack container with toolbar and slide animation
+// Claude Generated: version 2 - Trail toggle cycles off/mono/colored states
 
 import SwiftUI
 import SwiftData
@@ -46,6 +47,7 @@ struct ContentView: View {
         ToolbarItem(placement: .navigation) {
             connectionIndicator
         }
+        .sharedBackgroundVisibility(.hidden)
         ToolbarItem {
             Button {
                 withAnimation(.spring()) { store.showTable.toggle() }
@@ -56,10 +58,13 @@ struct ContentView: View {
         }
         ToolbarItem {
             Button {
-                store.showTrails.toggle()
+                switch store.trailMode {
+                case .off:     store.trailMode = .mono
+                case .mono:    store.trailMode = .colored
+                case .colored: store.trailMode = .off
+                }
             } label: {
-                Label("Trails",
-                      systemImage: store.showTrails ? "line.diagonal.arrow" : "line.diagonal")
+                Label("Trails", systemImage: trailIcon)
             }
         }
         ToolbarItem {
@@ -71,10 +76,22 @@ struct ContentView: View {
         }
     }
 
+    private var trailIcon: String {
+        switch store.trailMode {
+        case .off:     return "line.diagonal"
+        case .mono:    return "line.diagonal.arrow"
+        case .colored: return "paintbrush.pointed.fill"
+        }
+    }
+
     private var connectionIndicator: some View {
-        Circle()
-            .fill(connectionColor)
-            .frame(width: 10, height: 10)
+        Image("satellite-connection")
+            .renderingMode(.template)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 20, height: 20)
+            .foregroundStyle(connectionColor)
+            .background(.clear)
             .help(connectionLabel)
     }
 
@@ -99,11 +116,11 @@ struct ContentView: View {
     // MARK: - First Launch
 
     private func handleFirstLaunch() {
+        // Show config sheet if no hostname saved yet.
+        // Connection is initiated in SatelliteStore.configure() at startup.
         let config = store.fetchOrCreateConfig(in: modelContext)
         if config.hostname.isEmpty {
             showConfig = true
-        } else {
-            Task { await store.connectWithCurrentConfig() }
         }
     }
 }

@@ -7,12 +7,14 @@
 // Claude Generated: version 1 - MQTT actor with TLS connection and AsyncStream output
 // Claude Generated: version 2 - Fix backoff loop and initialize streams at init time
 // Claude Generated: version 3 - Fix self-cancelling reconnect, store message handler task, reconnect on listener failure
+// Claude Generated: version 4 - Add OSLog diagnostics; guard against spurious reconnect on intentional teardown
 
 import Foundation
 import Logging
 import MQTTNIO
 import NIOCore
 import NIOSSL
+import os
 
 /// Owns the mqtt-nio TLS client. Subscribes to gps_monitor/sky and
 /// gps_monitor/availability, decodes JSON payloads, and streams results.
@@ -26,6 +28,7 @@ actor MQTTService: MQTTServiceProtocol {
 
   // MARK: - Private State
 
+  private nonisolated let mqttLogger = os.Logger(subsystem: "com.astronomis.gps-tracker", category: "mqtt")
   private var skyStreamContinuation: AsyncStream<SkyMessage>.Continuation?
   private var stateStreamContinuation: AsyncStream<ConnectionState>.Continuation?
   private var client: MQTTClient?
@@ -54,15 +57,18 @@ actor MQTTService: MQTTServiceProtocol {
   // MARK: - Public Protocol Methods
 
   func connect(config: MQTTConfiguration, username: String, password: String) async throws {
+    mqttLogger.info("connect() called — host: \(config.hostname, privacy: .public):\(config.port, privacy: .public)")
     do {
       try await _connectOnce(config: config, username: username, password: password)
     } catch {
+      mqttLogger.error("connect() failed: \(error.localizedDescription, privacy: .public) — scheduling reconnect")
       yieldState(.error(error.localizedDescription))
       scheduleReconnect(config: config, username: username, password: password)
     }
   }
 
   func disconnect() async {
+    mqttLogger.info("disconnect() called — cancelling reconnectTask and tearing down client")
     reconnectTask?.cancel()
     reconnectTask = nil
     await _teardownClient()
@@ -75,13 +81,14 @@ actor MQTTService: MQTTServiceProtocol {
   /// Called from both disconnect() and _connectOnce() so that reconnect loops
   /// do not inadvertently cancel themselves.
   private func _teardownClient() async {
+    mqttLogger.info("_teardownClient() — cancelling messageHandlerTask and shutting down client")
+    messageHandlerTask?.cancel()
+    messageHandlerTask = nil
     if let client {
       try? await client.disconnect()
       try? await client.shutdown()
     }
     client = nil
-    messageHandlerTask?.cancel()
-    messageHandlerTask = nil
   }
 
   /// Performs a single connection attempt. Throws on any failure so callers
@@ -96,6 +103,7 @@ actor MQTTService: MQTTServiceProtocol {
     lastUsername = username
     lastPassword = password
 
+    mqttLogger.info("_connectOnce() — host: \(config.hostname, privacy: .public):\(config.port, privacy: .public) user: \(username.isEmpty ? "<none>" : username, privacy: .public)")
     await _teardownClient()
     yieldState(.connecting)
 
@@ -120,8 +128,10 @@ actor MQTTService: MQTTServiceProtocol {
 
     // These throw on failure — no internal catch so callers receive the error.
     try await newClient.connect()
+    mqttLogger.info("_connectOnce() — TCP/TLS connected, subscribing to topics")
     yieldState(.connected)
     try await subscribeToTopics(client: newClient)
+    mqttLogger.info("_connectOnce() — subscribed, starting message handler")
     startMessageHandler(client: newClient)
   }
 
@@ -142,16 +152,24 @@ actor MQTTService: MQTTServiceProtocol {
       for await result in listener {
         switch result {
         case .success(let publishInfo):
-          await handlePublishInfo(publishInfo)
+          handlePublishInfo(publishInfo)
         case .failure(let error):
           // listener error — broker may have disconnected
-          await yieldState(.error(error.localizedDescription))
+          mqttLogger.warning("startMessageHandler() — listener error: \(error.localizedDescription, privacy: .public)")
+          yieldState(.error(error.localizedDescription))
         }
       }
-      // Sequence ended — broker disconnected mid-session; schedule reconnect.
-      await yieldState(.error("Broker disconnected"))
-      if let config = await lastConfig {
-        await scheduleReconnect(
+      // Sequence ended. If the task was cancelled we were intentionally torn
+      // down (e.g. disconnect() or reconnect()); do NOT schedule a reconnect.
+      guard !Task.isCancelled else {
+        mqttLogger.info("startMessageHandler() — sequence ended due to task cancellation (intentional teardown), skipping reconnect")
+        return
+      }
+      // Unexpected sequence termination — broker disconnected mid-session.
+      mqttLogger.warning("startMessageHandler() — sequence ended unexpectedly, scheduling reconnect")
+      yieldState(.error("Broker disconnected"))
+      if let config = lastConfig {
+        scheduleReconnect(
           config: config,
           username: lastUsername,
           password: lastPassword)
@@ -186,16 +204,24 @@ actor MQTTService: MQTTServiceProtocol {
     password: String,
     delay: TimeInterval = 1.0
   ) {
+    mqttLogger.info("scheduleReconnect() — starting backoff loop, initial delay: \(delay, privacy: .public)s")
     reconnectTask?.cancel()
     reconnectTask = Task {
       var currentDelay = delay
       while !Task.isCancelled {
+        mqttLogger.info("scheduleReconnect() — waiting \(currentDelay, privacy: .public)s before retry")
         try? await Task.sleep(for: .seconds(currentDelay))
-        guard !Task.isCancelled else { break }
+        guard !Task.isCancelled else {
+          mqttLogger.info("scheduleReconnect() — cancelled during sleep, exiting loop")
+          break
+        }
         do {
+          mqttLogger.info("scheduleReconnect() — attempting reconnect")
           try await _connectOnce(config: config, username: username, password: password)
+          mqttLogger.info("scheduleReconnect() — reconnect succeeded")
           break
         } catch {
+          mqttLogger.error("scheduleReconnect() — attempt failed: \(error.localizedDescription, privacy: .public), next delay: \(min(currentDelay * 2, 60), privacy: .public)s")
           currentDelay = min(currentDelay * 2, 60)
         }
       }

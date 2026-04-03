@@ -6,6 +6,8 @@
 //
 // Claude Generated: version 1 - Canvas-based satellite polar sky view
 // Claude Generated: version 2 - Fix trail segment opacity to fade per-segment not per-path
+// Claude Generated: version 3 - Only draw trails for satellites currently in view
+// Claude Generated: version 4 - Support mono and SNR-colored trail modes
 
 import SwiftUI
 import SwiftData
@@ -28,8 +30,9 @@ struct PolarGraphView: View {
             Canvas { ctx, _ in
                 drawGrid(ctx: ctx, center: center, radius: radius)
                 drawCardinals(ctx: ctx, center: center, radius: radius)
-                if store.showTrails {
-                    drawTrails(ctx: ctx, center: center, radius: radius)
+                if store.trailMode != .off {
+                    drawTrails(ctx: ctx, center: center, radius: radius,
+                               colored: store.trailMode == .colored)
                 }
                 drawSatellites(ctx: ctx, center: center, radius: radius)
             }
@@ -88,10 +91,16 @@ struct PolarGraphView: View {
         }
     }
 
-    private func drawTrails(ctx: GraphicsContext, center: CGPoint, radius: CGFloat) {
+    private func drawTrails(ctx: GraphicsContext, center: CGPoint, radius: CGFloat,
+                             colored: Bool) {
+        // Only draw trails for satellites currently in view
+        let visiblePRNs = Set(store.satellites.map { $0.prn })
+
         // Group history by PRN
         var byPrn: [Int: [SatelliteHistoryEntry]] = [:]
-        for entry in history { byPrn[entry.prn, default: []].append(entry) }
+        for entry in history where visiblePRNs.contains(entry.prn) {
+            byPrn[entry.prn, default: []].append(entry)
+        }
 
         let now = Date()
         for (_, entries) in byPrn {
@@ -105,12 +114,23 @@ struct PolarGraphView: View {
                                     center: center, radius: radius)
                 let ageSecs = now.timeIntervalSince(curr.timestamp)
                 let opacity = max(0.2, 1.0 - (ageSecs / 86400.0))
+                let segmentColor = colored ? snrColor(for: curr).opacity(opacity)
+                                           : Color.secondary.opacity(opacity)
                 var segment = Path()
                 segment.move(to: from)
                 segment.addLine(to: to)
-                ctx.stroke(segment, with: .color(.secondary.opacity(opacity)), lineWidth: 1)
+                ctx.stroke(segment, with: .color(segmentColor), lineWidth: 1)
             }
         }
+    }
+
+    /// Derives a trail color from a history entry's SNR and used flag,
+    /// matching the same rules as Satellite.color.
+    private func snrColor(for entry: SatelliteHistoryEntry) -> Color {
+        guard entry.used else { return .red }
+        if entry.snr >= 35 { return .green }
+        if entry.snr >= 20 { return .orange }
+        return .yellow
     }
 
     private func drawSatellites(ctx: GraphicsContext, center: CGPoint, radius: CGFloat) {
@@ -130,8 +150,8 @@ struct PolarGraphView: View {
             }
 
             // PRN label
-            ctx.draw(Text("\(sat.prn)").font(.system(size: 9)).foregroundStyle(.secondary),
-                     at: CGPoint(x: point.x + dotRadius + 4, y: point.y))
+            ctx.draw(Text("\(sat.prn)").font(.system(size: 11)).foregroundStyle(.secondary),
+                     at: CGPoint(x: point.x + dotRadius + 7, y: point.y))
         }
     }
 

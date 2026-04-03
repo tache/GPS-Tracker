@@ -5,10 +5,19 @@
 //  Created by Christopher Graham on 4/1/26.
 //
 // Claude Generated: version 1 - Observable state hub consuming MQTT streams
+// Claude Generated: version 2 - Replace showTrails Bool with TrailMode enum
+// Claude Generated: version 3 - Auto-connect in configure() instead of relying on onAppear
 
 import Foundation
 import SwiftData
 import Observation
+
+/// Trail rendering mode for the polar graph.
+enum TrailMode {
+    case off      // no trails drawn
+    case mono     // trails drawn in white/secondary
+    case colored  // trails drawn using SNR-based SatelliteColor
+}
 
 /// Central state store for the app. Consumes AsyncStreams from MQTTService,
 /// maintains live satellite array, writes history to SwiftData (throttled),
@@ -20,7 +29,7 @@ final class SatelliteStore {
 
     private(set) var satellites: [Satellite] = []
     private(set) var connectionState: ConnectionState = .disconnected
-    var showTrails: Bool = true
+    var trailMode: TrailMode = .mono
     var showTable: Bool = false
 
     // MARK: - Private
@@ -49,6 +58,7 @@ final class SatelliteStore {
     func connectWithCurrentConfig() async {
         guard let context = modelContext else { return }
         let config = fetchOrCreateConfig(in: context)
+        guard !config.hostname.isEmpty else { return }
         let creds = KeychainHelper.load()
         try? await mqttService.connect(
             config: config,

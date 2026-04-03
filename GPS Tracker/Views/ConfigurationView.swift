@@ -6,6 +6,7 @@
 //
 // Claude Generated: version 1 - MQTT broker configuration sheet
 // Claude Generated: version 2 - Add save error alert and SatelliteStore in preview
+// Claude Generated: version 3 - Dismiss on successful save
 
 import SwiftUI
 import SwiftData
@@ -18,6 +19,7 @@ struct ConfigurationView: View {
 
     @Environment(SatelliteStore.self) private var store
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
 
     @State private var hostname: String = ""
     @State private var port: String = "8883"
@@ -94,6 +96,7 @@ struct ConfigurationView: View {
             return
         }
         Task { await store.reconnect(config: config) }
+        dismiss()
     }
 }
 
