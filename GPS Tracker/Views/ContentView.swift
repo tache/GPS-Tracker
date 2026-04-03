@@ -6,6 +6,7 @@
 //
 // Claude Generated: version 1 - Root HStack container with toolbar and slide animation
 // Claude Generated: version 2 - Trail toggle cycles off/mono/colored states
+// Claude Generated: version 3 - Flash connection indicator white on MQTT message receive
 
 import SwiftUI
 import SwiftData
@@ -96,8 +97,9 @@ struct ContentView: View {
     }
 
     private var connectionColor: Color {
+        if store.isReceivingMessage { return Color("status-indicator-flash-color") }
         switch store.connectionState {
-        case .connected:     return .green
+        case .connected:     return Color("status-indicator-normal-color")
         case .connecting:    return .yellow
         case .disconnected:  return .red
         case .error:         return .red

@@ -1,8 +1,52 @@
 {
   "images" : [
     {
-      "filename" : "thin 0366 satellite connection.svg",
+      "filename" : "sat-tracker-light-icon 1.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "filename" : "sat-tracker-light-icon.svg",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "sat-tracker-dark-icon.svg",
+      "idiom" : "universal"
+    },
+    {
+      "filename" : "sat-tracker-light-icon 3.svg",
+      "idiom" : "mac"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "filename" : "sat-tracker-light-icon 2.svg",
+      "idiom" : "mac"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "sat-tracker-dark-icon 1.svg",
+      "idiom" : "mac"
     }
   ],
   "info" : {

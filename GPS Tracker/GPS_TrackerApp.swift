@@ -8,6 +8,7 @@
 // Claude Generated: version 2 - Wire ConfigurationView into Settings scene
 // Claude Generated: version 3 - Use in-memory store when --uitesting flag is present
 // Claude Generated: version 4 - Connect on scenePhase active instead of init-time Task
+// Claude Generated: version 5 - Add MenuBarExtra with satellite count and receive flash
 
 import SwiftUI
 import SwiftData
@@ -41,7 +42,7 @@ struct GPSTrackerApp: App {
     }
 
     var body: some Scene {
-        WindowGroup {
+        WindowGroup(id: "main") {
             ContentView()
                 .environment(satelliteStore)
         }
@@ -56,6 +57,14 @@ struct GPSTrackerApp: App {
             ConfigurationView()
                 .environment(satelliteStore)
                 .modelContainer(modelContainer)
+        }
+
+        MenuBarExtra {
+            MenuBarStatusMenu()
+                .environment(satelliteStore)
+        } label: {
+            MenuBarStatusLabel()
+                .environment(satelliteStore)
         }
     }
 }

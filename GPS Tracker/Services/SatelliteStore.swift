@@ -7,6 +7,7 @@
 // Claude Generated: version 1 - Observable state hub consuming MQTT streams
 // Claude Generated: version 2 - Replace showTrails Bool with TrailMode enum
 // Claude Generated: version 3 - Auto-connect in configure() instead of relying on onAppear
+// Claude Generated: version 4 - Add isReceivingMessage pulse for connection indicator
 
 import Foundation
 import SwiftData
@@ -29,6 +30,7 @@ final class SatelliteStore {
 
     private(set) var satellites: [Satellite] = []
     private(set) var connectionState: ConnectionState = .disconnected
+    private(set) var isReceivingMessage: Bool = false
     var trailMode: TrailMode = .mono
     var showTable: Bool = false
 
@@ -39,6 +41,7 @@ final class SatelliteStore {
     private var lastHistoryWriteDate: Date?
     private var skyTask: Task<Void, Never>?
     private var stateTask: Task<Void, Never>?
+    private var messageFlashTask: Task<Void, Never>?
     private var pruneTimer: Timer?
 
     // MARK: - Init
@@ -102,6 +105,19 @@ final class SatelliteStore {
         }.sorted { $0.snr > $1.snr }
 
         maybeWriteHistory()
+        pulseMessageIndicator()
+    }
+
+    /// Briefly sets isReceivingMessage for the connection indicator flash.
+    /// Cancels any pending reset so rapid messages extend the flash rather than stacking tasks.
+    private func pulseMessageIndicator() {
+        isReceivingMessage = true
+        messageFlashTask?.cancel()
+        messageFlashTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .milliseconds(200))
+            guard !Task.isCancelled else { return }
+            self?.isReceivingMessage = false
+        }
     }
 
     // MARK: - History (SwiftData)
