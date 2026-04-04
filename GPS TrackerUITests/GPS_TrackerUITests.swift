@@ -10,51 +10,52 @@ import XCTest
 
 final class GPSTrackerUITests: XCTestCase {
 
-    var app: XCUIApplication!
+  var app: XCUIApplication!
 
-    override func setUp() {
-        super.setUp()
-        continueAfterFailure = false
-        app = XCUIApplication()
-        app.launchArguments = ["--uitesting"]
-        app.launch()
-    }
+  override func setUp() {
+    super.setUp()
+    continueAfterFailure = false
+    app = XCUIApplication()
+    app.launchArguments = ["--uitesting"]
+    app.launch()
+  }
 
-    func testAppLaunchesSuccessfully() {
-        XCTAssertTrue(app.windows.firstMatch.exists)
-    }
+  func testAppLaunchesSuccessfully() {
+    XCTAssertTrue(app.windows.firstMatch.exists)
+  }
 
-    func testFirstLaunchShowsConfigurationSheet() {
-        // On first launch with no config, the configuration sheet should appear
-        // (The app uses --uitesting flag to start with a blank in-memory store)
-        let hostnameField = app.textFields["Hostname"]
-        XCTAssertTrue(hostnameField.waitForExistence(timeout: 3),
-                      "Configuration sheet should appear on first launch")
-    }
+  func testFirstLaunchShowsConfigurationSheet() {
+    // On first launch with no config, the configuration sheet should appear
+    // (The app uses --uitesting flag to start with a blank in-memory store)
+    let hostnameField = app.textFields["Hostname"]
+    XCTAssertTrue(
+      hostnameField.waitForExistence(timeout: 3),
+      "Configuration sheet should appear on first launch")
+  }
 
-    func testPolarGraphViewIsVisible() {
-        // Dismiss config sheet if present by pressing Escape
-        app.typeKey(.escape, modifierFlags: [])
+  func testPolarGraphViewIsVisible() {
+    // Dismiss config sheet if present by pressing Escape
+    app.typeKey(.escape, modifierFlags: [])
 
-        // The main window should be present
-        XCTAssertTrue(app.windows.firstMatch.exists)
-    }
+    // The main window should be present
+    XCTAssertTrue(app.windows.firstMatch.exists)
+  }
 
-    func testTableToggleButtonExists() {
-        app.typeKey(.escape, modifierFlags: [])
+  func testTableToggleButtonExists() {
+    app.typeKey(.escape, modifierFlags: [])
 
-        let satellitesButton = app.buttons["Satellites"]
-        XCTAssertTrue(satellitesButton.waitForExistence(timeout: 2))
-    }
+    let satellitesButton = app.buttons["Satellites"]
+    XCTAssertTrue(satellitesButton.waitForExistence(timeout: 2))
+  }
 
-    func testSettingsButtonOpensConfig() {
-        app.typeKey(.escape, modifierFlags: [])
+  func testSettingsButtonOpensConfig() {
+    app.typeKey(.escape, modifierFlags: [])
 
-        let settingsButton = app.buttons["Settings"]
-        XCTAssertTrue(settingsButton.waitForExistence(timeout: 2))
-        settingsButton.tap()
+    let settingsButton = app.buttons["Settings"]
+    XCTAssertTrue(settingsButton.waitForExistence(timeout: 2))
+    settingsButton.tap()
 
-        let hostnameField = app.textFields["Hostname"]
-        XCTAssertTrue(hostnameField.waitForExistence(timeout: 2))
-    }
+    let hostnameField = app.textFields["Hostname"]
+    XCTAssertTrue(hostnameField.waitForExistence(timeout: 2))
+  }
 }

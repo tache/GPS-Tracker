@@ -1,0 +1,195 @@
+# https://github.com/realm/SwiftLint/blob/master/Rules.md
+# https://github.com/realm/SwiftLint
+
+reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, junit)
+
+# Regular rules
+disabled_rules:
+    - missing_docs
+    - multiple_closures_with_trailing_closure
+    - shorthand_operator
+    - statement_position
+    - todo
+    - unused_closure_parameter
+    - function_parameter_count
+    - comment_spacing
+    - type_name
+    - orphaned_doc_comment
+
+# Re-enable with reasonable limits
+line_length:
+  warning: 160
+  ignores_urls: true
+  ignores_interpolated_strings: true
+  ignores_multiline_strings: true
+  ignores_function_declarations: true
+  ignores_comments: true
+  excluded_lines_patterns:
+    - '^import\ '        # Ignores long import statements
+    - 'https?:\/\/\S+'    # Ignores lines containing URLs
+
+cyclomatic_complexity:
+    warning: 15  # Your code is complex (animations, etc)
+    error: 25
+
+type_body_length:
+    warning: 750  # General guideline
+    error: 1000  # Allow for CKPublicStore (613) and WheelViewController (614)
+
+nesting:
+    type_level: 3  # Allow some nesting
+    function_level: 4  # Especially for guard/if let chains
+
+force_cast: warning
+
+force_try:
+  severity: warning
+
+# unused_closure_parameter: warning
+
+excluded:
+    - Carthage
+    - .worktrees
+    - DerivedData
+    - build
+    - "Wheel-of-What-UI-Tests"  # UI tests have locale mapping tables with naturally high complexity
+
+identifier_name:
+  allowed_symbols: "_"
+  min_length: 2
+  validates_start_with_lowercase: true
+  max_length:
+      warning: 50
+      error: 100
+  excluded: # excluded via string array
+      - _code
+      - i  # Common loop counter
+      - j  # Common loop counter
+      - x  # Common coordinate
+      - y  # Common coordinate
+      - z  # Common coordinate
+      - id  # Common identifier
+      - r  # RGB red component
+      - g  # RGB green component
+      - b  # RGB blue component
+      - a  # Alpha component / triangle side
+      - h  # HSL hue component
+      - s  # HSL saturation component
+      - l  # HSL lightness component
+      - c  # Triangle side (geometry)
+
+large_tuple:
+    warning: 4
+    error: 5
+
+colon:
+    severity: warning
+    # comma: error
+    # empty_count: error
+    # legacy_constant: error
+    # legacy_constructor: error
+    # opening_brace: error
+    # trailing_newline: error
+    # trailing_semicolon: error
+
+# Analyzer rule configurations
+
+opt_in_rules:
+    - empty_count
+    - closure_spacing
+    - vertical_whitespace
+    - first_where  # helps find better alternatives to .filter.first
+    
+    # Modern Swift patterns
+    - contains_over_filter_count  # .contains() vs .filter().count
+    - contains_over_filter_is_empty  # .contains() vs .filter().isEmpty
+    - contains_over_first_not_nil  # .contains() vs .first(where:) != nil
+    - last_where  # .last(where:) vs .filter().last
+    - sorted_first_last  # .min()/.max() vs .sorted().first/last
+
+    # Code quality
+    - unused_optional_binding  # Already catching these!
+    # - explicit_init  # String() vs String.init()
+    - redundant_nil_coalescing  # foo ?? nil
+    - redundant_type_annotation  # let x: String = ""
+    - yoda_condition  # constant == variable vs variable == constant
+
+    # SwiftUI specific
+    # - prefer_self_in_static_references  # Self.foo vs ClassName.foo
+
+    # Safety
+    - unneeded_break_in_switch  # Redundant breaks in switch
+    - fatal_error_message  # Require message in fatalError()
+    - force_unwrapping  # Warning for !
+
+    # Async/await patterns
+    - unhandled_throwing_task  # Catches unhandled errors in Task blocks
+    # - redundant_sendable  # Warns about unnecessary Sendable conformance (may be noisy)
+
+    # Security/Localization (disabled - too strict for single-bundle app)
+    # - nslocalizedstring_key  # Validates localization keys at compile time (requires strings file parsing)
+    # - nslocalizedstring_require_bundle  # Forces bundle specification (unnecessary for main bundle)
+
+# cyclomatic_complexity:
+#   - 10 # show warning
+#   - 15 # force error
+
+function_body_length:
+        warning: 225
+        error: 300
+
+file_length:
+        warning: 500
+        error: 750
+
+custom_rules:
+  force_https: # From https://github.com/Twigz/Game
+      name: "Force HTTPS over HTTP"
+      regex: "((?i)http(?!s))"
+      match_kinds: string
+      message: "HTTPS should be favored over HTTP"
+      severity: warning
+
+  double_space: # From https://github.com/IBM-Swift/Package-Builder
+      include: "*.swift"
+      name: "Double space"
+      regex: '([a-z,A-Z] \s+)'
+      message: "Double space between keywords"
+      match_kinds: keyword
+      severity: error
+
+  # multi_clause_guard:
+  #     regex: 'guard [\h\S]*,'
+
+  explicit_failure_calls:
+      name: “Avoid asserting ‘false’”
+      regex: '((assert|precondition)\(false)'
+      message: “Use assertionFailure() or preconditionFailure() instead.”
+      severity: warning
+
+  # comments_capitalized_find_possible_code:
+  #     name: "Catch Commented Out Code"
+  #     regex: "(^ *// +(?!swiftlint)[a-z]+)"
+  #     message: "The first word of a comment should be capitalized"
+  #     severity: warning
+
+  unnecessary_type:
+      name: "Unnecessary Type"
+      regex: '(?:let|var)\s+(\w+):\s*(\w+)(?:<[^>]+>)?\s*=\s*\2(?:<[^>]+>)?\('
+      message: "Type annotation not needed when inferrable from initializer"
+      severity: warning
+
+  swiftui_state_private:
+      name: "SwiftUI @State should be private"
+      regex: '(?<!@Previewable\s)(@State|@StateObject)\s+(?!private)'
+      message: "@State and @StateObject should be private"
+      severity: warning
+
+  # avoid_print:  # Disabled temporarily - 46 violations to fix later
+  #     name: "Avoid print()"
+  #     regex: '\bprint\('
+  #     message: "Use log.debug/info/warning instead of print()"
+  #     severity: warning
+  #     excluded:
+  #         - ".*Tests.*"  # Allow in tests
+  #         - "BackgroundAssets/.*"  # Temporary/archived code snippets

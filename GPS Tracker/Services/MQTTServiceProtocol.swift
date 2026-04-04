@@ -12,8 +12,8 @@
 /// Protocol that MQTTService conforms to, enabling MockMQTTService injection in tests.
 /// ConnectionState is top-level so this protocol compiles independently.
 internal protocol MQTTServiceProtocol: AnyObject {
-    func connect(config: MQTTConfiguration, username: String, password: String) async throws
-    func disconnect() async
-    nonisolated var skyStream: AsyncStream<SkyMessage> { get }
-    nonisolated var connectionStateStream: AsyncStream<ConnectionState> { get }
+  func connect(config: MQTTConfiguration, username: String, password: String) async throws
+  func disconnect() async
+  nonisolated var skyStream: AsyncStream<SkyMessage> { get }
+  nonisolated var connectionStateStream: AsyncStream<ConnectionState> { get }
 }

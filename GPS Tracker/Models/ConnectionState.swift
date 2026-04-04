@@ -10,8 +10,8 @@
 /// Defined at the top level so MQTTServiceProtocol, MQTTService, and SatelliteStore
 /// can all reference it without circular dependencies.
 internal enum ConnectionState: Equatable {
-    case disconnected
-    case connecting
-    case connected
-    case error(String)
+  case disconnected
+  case connecting
+  case connected
+  case error(String)
 }

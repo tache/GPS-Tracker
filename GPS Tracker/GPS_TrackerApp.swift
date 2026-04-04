@@ -10,61 +10,61 @@
 // Claude Generated: version 4 - Connect on scenePhase active instead of init-time Task
 // Claude Generated: version 5 - Add MenuBarExtra with satellite count and receive flash
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 @main
 struct GPSTrackerApp: App {
 
-    @Environment(\.scenePhase) private var scenePhase
+  @Environment(\.scenePhase) private var scenePhase
 
-    private let mqttService = MQTTService()
-    private let satelliteStore: SatelliteStore
+  private let mqttService = MQTTService()
+  private let satelliteStore: SatelliteStore
 
-    private let modelContainer: ModelContainer = {
-        let schema = Schema([
-            SatelliteHistoryEntry.self,
-            MQTTConfiguration.self
-        ])
-        let isUITesting = CommandLine.arguments.contains("--uitesting")
-        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: isUITesting)
-        do {
-            return try ModelContainer(for: schema, configurations: [config])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
+  private let modelContainer: ModelContainer = {
+    let schema = Schema([
+      SatelliteHistoryEntry.self,
+      MQTTConfiguration.self
+    ])
+    let isUITesting = CommandLine.arguments.contains("--uitesting")
+    let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: isUITesting)
+    do {
+      return try ModelContainer(for: schema, configurations: [config])
+    } catch {
+      fatalError("Could not create ModelContainer: \(error)")
+    }
+  }()
 
-    init() {
-        let store = SatelliteStore(mqttService: mqttService)
-        store.configure(modelContext: modelContainer.mainContext)
-        satelliteStore = store
+  init() {
+    let store = SatelliteStore(mqttService: mqttService)
+    store.configure(modelContext: modelContainer.mainContext)
+    satelliteStore = store
+  }
+
+  var body: some Scene {
+    WindowGroup(id: "main") {
+      ContentView()
+        .environment(satelliteStore)
+    }
+    .modelContainer(modelContainer)
+    .onChange(of: scenePhase) { _, newPhase in
+      if newPhase == .active && satelliteStore.connectionState == .disconnected {
+        Task { await satelliteStore.connectWithCurrentConfig() }
+      }
     }
 
-    var body: some Scene {
-        WindowGroup(id: "main") {
-            ContentView()
-                .environment(satelliteStore)
-        }
+    Settings {
+      ConfigurationView()
+        .environment(satelliteStore)
         .modelContainer(modelContainer)
-        .onChange(of: scenePhase) { _, newPhase in
-            if newPhase == .active && satelliteStore.connectionState == .disconnected {
-                Task { await satelliteStore.connectWithCurrentConfig() }
-            }
-        }
-
-        Settings {
-            ConfigurationView()
-                .environment(satelliteStore)
-                .modelContainer(modelContainer)
-        }
-
-        MenuBarExtra {
-            MenuBarStatusMenu()
-                .environment(satelliteStore)
-        } label: {
-            MenuBarStatusLabel()
-                .environment(satelliteStore)
-        }
     }
+
+    MenuBarExtra {
+      MenuBarStatusMenu()
+        .environment(satelliteStore)
+    } label: {
+      MenuBarStatusLabel()
+        .environment(satelliteStore)
+    }
+  }
 }

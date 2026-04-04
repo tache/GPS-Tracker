@@ -13,12 +13,12 @@ import SwiftData
 /// Username and password are stored in the macOS Keychain via KeychainHelper.
 /// Exactly one row exists at runtime — enforced by SatelliteStore.fetchOrCreate().
 @Model
-class MQTTConfiguration {
-    var hostname: String
-    var port: Int  // default 8883 (standard MQTT TLS port)
+final class MQTTConfiguration: Sendable {
+  var hostname: String
+  var port: Int // default 8883 (standard MQTT TLS port)
 
-    init(hostname: String = "", port: Int = 8883) {
-        self.hostname = hostname
-        self.port = port
-    }
+  init(hostname: String = "", port: Int = 8883) {
+    self.hostname = hostname
+    self.port = port
+  }
 }

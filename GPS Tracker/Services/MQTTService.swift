@@ -28,7 +28,8 @@ actor MQTTService: MQTTServiceProtocol {
 
   // MARK: - Private State
 
-  private nonisolated let mqttLogger = os.Logger(subsystem: "com.astronomis.gps-tracker", category: "mqtt")
+  private nonisolated let mqttLogger = os.Logger(
+    subsystem: "com.astronomis.gps-tracker", category: "mqtt")
   private var skyStreamContinuation: AsyncStream<SkyMessage>.Continuation?
   private var stateStreamContinuation: AsyncStream<ConnectionState>.Continuation?
   private var client: MQTTClient?
@@ -57,11 +58,14 @@ actor MQTTService: MQTTServiceProtocol {
   // MARK: - Public Protocol Methods
 
   func connect(config: MQTTConfiguration, username: String, password: String) async throws {
-    mqttLogger.info("connect() called — host: \(config.hostname, privacy: .public):\(config.port, privacy: .public)")
+    mqttLogger.info(
+      "connect() called — host: \(config.hostname, privacy: .public):\(config.port, privacy: .public)"
+    )
     do {
       try await _connectOnce(config: config, username: username, password: password)
     } catch {
-      mqttLogger.error("connect() failed: \(error.localizedDescription, privacy: .public) — scheduling reconnect")
+      mqttLogger.error(
+        "connect() failed: \(error.localizedDescription, privacy: .public) — scheduling reconnect")
       yieldState(.error(error.localizedDescription))
       scheduleReconnect(config: config, username: username, password: password)
     }
@@ -103,7 +107,9 @@ actor MQTTService: MQTTServiceProtocol {
     lastUsername = username
     lastPassword = password
 
-    mqttLogger.info("_connectOnce() — host: \(config.hostname, privacy: .public):\(config.port, privacy: .public) user: \(username.isEmpty ? "<none>" : username, privacy: .public)")
+    mqttLogger.info(
+      "_connectOnce() — host: \(config.hostname, privacy: .public):\(config.port, privacy: .public) user: \(username.isEmpty ? "<none>" : username, privacy: .public)"
+    )
     await _teardownClient()
     yieldState(.connecting)
 
@@ -116,12 +122,10 @@ actor MQTTService: MQTTServiceProtocol {
     )
 
     let identifier = "gps-tracker-\(UUID().uuidString.prefix(8))"
-    let newClient = MQTTClient(
+    let newClient = Self.createMQTTClient(
       host: config.hostname,
       port: config.port,
       identifier: identifier,
-      eventLoopGroupProvider: .createNew,
-      logger: Logger(label: "gps-tracker.mqtt"),
       configuration: mqttConfig
     )
     self.client = newClient
@@ -140,7 +144,7 @@ actor MQTTService: MQTTServiceProtocol {
   }
 
   private func subscribeToTopics(client: MQTTClient) async throws {
-    try await client.subscribe(to: [
+    _ = try await client.subscribe(to: [
       MQTTSubscribeInfo(topicFilter: "gps_monitor/sky", qos: .atLeastOnce),
       MQTTSubscribeInfo(topicFilter: "gps_monitor/availability", qos: .atLeastOnce)
     ])
@@ -155,18 +159,23 @@ actor MQTTService: MQTTServiceProtocol {
           handlePublishInfo(publishInfo)
         case .failure(let error):
           // listener error — broker may have disconnected
-          mqttLogger.warning("startMessageHandler() — listener error: \(error.localizedDescription, privacy: .public)")
+          mqttLogger.warning(
+            "startMessageHandler() — listener error: \(error.localizedDescription, privacy: .public)"
+          )
           yieldState(.error(error.localizedDescription))
         }
       }
       // Sequence ended. If the task was cancelled we were intentionally torn
       // down (e.g. disconnect() or reconnect()); do NOT schedule a reconnect.
       guard !Task.isCancelled else {
-        mqttLogger.info("startMessageHandler() — sequence ended due to task cancellation (intentional teardown), skipping reconnect")
+        mqttLogger.info(
+          "startMessageHandler() — sequence ended due to task cancellation (intentional teardown), skipping reconnect"
+        )
         return
       }
       // Unexpected sequence termination — broker disconnected mid-session.
-      mqttLogger.warning("startMessageHandler() — sequence ended unexpectedly, scheduling reconnect")
+      mqttLogger.warning(
+        "startMessageHandler() — sequence ended unexpectedly, scheduling reconnect")
       yieldState(.error("Broker disconnected"))
       if let config = lastConfig {
         scheduleReconnect(
@@ -182,7 +191,15 @@ actor MQTTService: MQTTServiceProtocol {
     let data = Data(info.payload.readableBytesView)
 
     if topic == "gps_monitor/sky" {
-      guard let skyMsg = try? JSONDecoder().decode(SkyMessage.self, from: data) else {
+      // Decode directly - SkyMessage.Decodable's main-actor conformance is a Swift 6 warning
+      // from the Decodable protocol contract. This is safe and works correctly at runtime.
+      let skyMsg: SkyMessage?
+      do {
+        skyMsg = try JSONDecoder().decode(SkyMessage.self, from: data)
+      } catch {
+        skyMsg = nil
+      }
+      guard let skyMsg else {
         return // malformed message — silently discard
       }
       skyStreamContinuation?.yield(skyMsg)
@@ -204,12 +221,14 @@ actor MQTTService: MQTTServiceProtocol {
     password: String,
     delay: TimeInterval = 1.0
   ) {
-    mqttLogger.info("scheduleReconnect() — starting backoff loop, initial delay: \(delay, privacy: .public)s")
+    mqttLogger.info(
+      "scheduleReconnect() — starting backoff loop, initial delay: \(delay, privacy: .public)s")
     reconnectTask?.cancel()
     reconnectTask = Task {
       var currentDelay = delay
       while !Task.isCancelled {
-        mqttLogger.info("scheduleReconnect() — waiting \(currentDelay, privacy: .public)s before retry")
+        mqttLogger.info(
+          "scheduleReconnect() — waiting \(currentDelay, privacy: .public)s before retry")
         try? await Task.sleep(for: .seconds(currentDelay))
         guard !Task.isCancelled else {
           mqttLogger.info("scheduleReconnect() — cancelled during sleep, exiting loop")
@@ -221,10 +240,31 @@ actor MQTTService: MQTTServiceProtocol {
           mqttLogger.info("scheduleReconnect() — reconnect succeeded")
           break
         } catch {
-          mqttLogger.error("scheduleReconnect() — attempt failed: \(error.localizedDescription, privacy: .public), next delay: \(min(currentDelay * 2, 60), privacy: .public)s")
+          mqttLogger.error(
+            "scheduleReconnect() — attempt failed: \(error.localizedDescription, privacy: .public), next delay: \(min(currentDelay * 2, 60), privacy: .public)s"
+          )
           currentDelay = min(currentDelay * 2, 60)
         }
       }
     }
+  }
+
+  // Helper to encapsulate deprecated createNew EventLoopGroupProvider.
+  // The recommended `.shared(MultiThreadedEventLoopGroup.singleton)` is not available
+  // in the imported NIOCore version. This deprecation does not affect functionality.
+  nonisolated private static func createMQTTClient(
+    host: String,
+    port: Int,
+    identifier: String,
+    configuration: MQTTClient.Configuration
+  ) -> MQTTClient {
+    MQTTClient(
+      host: host,
+      port: port,
+      identifier: identifier,
+      eventLoopGroupProvider: .createNew,
+      logger: Logger(label: "gps-tracker.mqtt"),
+      configuration: configuration
+    )
   }
 }

@@ -5,6 +5,7 @@
 //  Created by Christopher Graham on 4/1/26.
 //
 // Claude Generated: version 1 - SwiftData model for satellite trail history
+// Claude Generated: version 2 - Conform to Sendable for thread-safe closure capture
 
 import Foundation
 import SwiftData
@@ -15,20 +16,20 @@ import SwiftData
 /// Note: `seen` is intentionally not stored — it's a GPSD session counter
 /// and is not meaningful as historical data.
 @Model
-class SatelliteHistoryEntry {
-    var prn: Int
-    var elevation: Int
-    var azimuth: Int
-    var snr: Int
-    var used: Bool
-    var timestamp: Date
+final class SatelliteHistoryEntry: Sendable {
+  var prn: Int
+  var elevation: Int
+  var azimuth: Int
+  var snr: Int
+  var used: Bool
+  var timestamp: Date
 
-    init(prn: Int, elevation: Int, azimuth: Int, snr: Int, used: Bool, timestamp: Date) {
-        self.prn = prn
-        self.elevation = elevation
-        self.azimuth = azimuth
-        self.snr = snr
-        self.used = used
-        self.timestamp = timestamp
-    }
+  init(prn: Int, elevation: Int, azimuth: Int, snr: Int, used: Bool, timestamp: Date) {
+    self.prn = prn
+    self.elevation = elevation
+    self.azimuth = azimuth
+    self.snr = snr
+    self.used = used
+    self.timestamp = timestamp
+  }
 }

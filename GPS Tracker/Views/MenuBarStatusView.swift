@@ -21,18 +21,18 @@ import SwiftUI
 /// Count format: "used|total" e.g. "6|10".
 struct MenuBarStatusLabel: View {
 
-    @Environment(SatelliteStore.self) private var store
+  @Environment(SatelliteStore.self) private var store
 
-    var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: "globe")
-            if !store.satellites.isEmpty {
-                let used = store.satellites.filter { $0.used }.count
-                Text("\(used)|\(store.satellites.count)")
-                    .font(.system(size: 11, weight: .medium, design: .monospaced))
-            }
-        }
+  var body: some View {
+    HStack(spacing: 4) {
+      Image(systemName: "globe")
+      if !store.satellites.isEmpty {
+        let used = store.satellites.filter { $0.used }.count
+        Text("\(used)|\(store.satellites.count)")
+          .font(.system(size: 11, weight: .medium, design: .monospaced))
+      }
     }
+  }
 }
 
 // MARK: - Menu Bar Dropdown
@@ -40,30 +40,30 @@ struct MenuBarStatusLabel: View {
 /// Dropdown menu shown when the menu bar item is clicked.
 struct MenuBarStatusMenu: View {
 
-    @Environment(SatelliteStore.self) private var store
-    @Environment(\.openWindow) private var openWindow
+  @Environment(SatelliteStore.self) private var store
+  @Environment(\.openWindow) private var openWindow
 
-    var body: some View {
-        Text(statusSummary)
-        Divider()
-        Button("Open GPS Tracker") {
-            openWindow(id: "main")
-            NSApp.activate(ignoringOtherApps: true)
-        }
+  var body: some View {
+    Text(statusSummary)
+    Divider()
+    Button("Open GPS Tracker") {
+      openWindow(id: "main")
+      NSApp.activate(ignoringOtherApps: true)
     }
+  }
 
-    private var statusSummary: String {
-        switch store.connectionState {
-        case .connected:
-            let used = store.satellites.filter { $0.used }.count
-            let total = store.satellites.count
-            return total == 0 ? "Connected — awaiting data" : "\(used) of \(total) satellites in use"
-        case .connecting:
-            return "Connecting…"
-        case .disconnected:
-            return "Disconnected"
-        case .error(let msg):
-            return "Error: \(msg)"
-        }
+  private var statusSummary: String {
+    switch store.connectionState {
+    case .connected:
+      let used = store.satellites.filter { $0.used }.count
+      let total = store.satellites.count
+      return total == 0 ? "Connected — awaiting data" : "\(used) of \(total) satellites in use"
+    case .connecting:
+      return "Connecting…"
+    case .disconnected:
+      return "Disconnected"
+    case .error(let msg):
+      return "Error: \(msg)"
     }
+  }
 }

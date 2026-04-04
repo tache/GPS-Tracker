@@ -1,0 +1,9 @@
+{
+  "lineLength" : 160,
+  "multiElementCollectionTrailingCommas" : false,
+  "rules" : {
+    "NeverForceUnwrap" : true,
+    "NeverUseForceTry" : true
+  },
+  "spacesBeforeEndOfLineComments" : 1
+}
